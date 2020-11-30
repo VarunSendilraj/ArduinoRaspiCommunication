@@ -1,0 +1,82 @@
+import serial
+import time
+from firebase import firebase
+
+
+# %%
+import firebase_admin
+from firebase_admin import credentials
+
+cred = credentials.Certificate("firebase_key.json")
+firebase_admin.initialize_app(cred)
+
+
+# %%
+from firebase_admin import firestore
+
+db =  firestore.client()
+docRef = db.collection(u'hydroSystem').document(u'lambert')
+
+
+# %%
+docRef.get().to_dict()
+
+
+# %%
+import datetime
+iotData ={
+    u'Temp': 20.2,
+    u'Ph': 7,
+    u'location': 'lambert',
+    u'light':100,
+    u'time':datetime.datetime.now()
+}
+db.collection(u'hydroSystem').document(u'lambert').set(iotData)
+
+
+# %%
+ser = serial.Serial('/dev/ttyACM0',9600)
+while True:
+	data=ser.readline()
+	time.sleep(2)
+        data = ser.readline()
+        sensors= data.split("\t")
+        light= sensors[0]
+        co2 = sensors[1]
+        humidity = sensors[2]
+        temp =  sensors[3]
+
+        print ("light :"+ light )
+		# %%
+	import firebase_admin
+	from firebase_admin import credentials
+
+	cred = credentials.Certificate("firebase_key.json")
+	firebase_admin.initialize_app(cred)
+
+
+	# %%
+	from firebase_admin import firestore
+
+	db =  firestore.client()
+	docRef = db.collection(u'hydroSystem').document(u'lambert')
+
+
+	# %%
+	docRef.get().to_dict()
+
+
+	# %%
+	import datetime
+	iotData ={
+    	u'Temp': temp,
+    	u'Ph': co2,
+    	u'location': 'lambert',
+    	u'light':light,
+    	u'time':datetime.datetime.now()
+	}
+	print ("sent")
+	db.collection(u'hydroSystem').document(u'lambert').set(iotData)
+
+
+	# %%
