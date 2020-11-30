@@ -1,0 +1,37 @@
+# %%
+from firebase import firebase
+
+
+# %%
+import firebase_admin
+from firebase_admin import credentials
+
+cred = credentials.Certificate("firebase_key.json")
+firebase_admin.initialize_app(cred)
+
+
+# %%
+from firebase_admin import firestore
+
+db =  firestore.client()
+docRef = db.collection(u'hydroSystem').document(u'lambert')
+
+
+# %%
+docRef.get().to_dict()
+
+
+# %%
+import datetime
+iotData ={
+    u'Temp': 80,
+    u'Ph': 78,
+    u'location': 'lambert',
+    u'light':56,
+    u'time':datetime.datetime.now()
+}
+db.collection(u'hydroSystem').document(u'lambert').set(iotData)
+
+
+# %%
+
